@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="./Assets/banner.png" alt="Networking Labs Banner" width="100%">
+</p>
+
+<br>
+
 # 🌐 Networking Labs
 
 Welcome to my Networking Labs repository!
