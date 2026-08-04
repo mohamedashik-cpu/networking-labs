@@ -36,10 +36,7 @@ Basic Connectivity is the first step in building any computer network. This lab 
 
 ## 🌐 Network Topology
 
-The network consists of one PC connected to a switch, the switch connected to a router, and a laptop connected to the router using a console cable for CLI access.
-
-> **Topology Screenshot:**  
-> See `topology.png`
+![Basic Connectivity Topology](topology.png)
 
 ---
 
