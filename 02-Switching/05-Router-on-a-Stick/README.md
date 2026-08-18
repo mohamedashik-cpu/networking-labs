@@ -39,7 +39,7 @@ Router-on-a-Stick is implemented using router subinterfaces with 802.1Q encapsul
 
 The following topology was created in Cisco Packet Tracer:
 
-![Router-on-a-Stick Network Topology](./topology.png)
+![Router-on-a-Stick Network Topology](./01-topology.png)
 
 ---
 
@@ -57,10 +57,10 @@ The following topology was created in Cisco Packet Tracer:
 
 ## 📊 VLAN Configuration
 
-| VLAN ID | VLAN Name | Network         | Default Gateway |
-| ------- | --------- | --------------- | --------------- |
-| 10      | HR        | 192.168.10.0/24 | 192.168.10.1    |
-| 20      | SALES     | 192.168.20.0/24 | 192.168.20.1    |
+| VLAN ID | VLAN Name | Network         |
+| ------- | --------- | --------------- |
+| 10      | HR        | 192.168.10.0/24 |
+| 20      | SALES     | 192.168.20.0/24 |
 
 ---
 
@@ -185,9 +185,9 @@ VLAN 10 → Fa0/1, Fa0/2
 VLAN 20 → Fa0/3, Fa0/4
 ```
 
-### VLAN Verification Screenshot
+### VLAN Verification
 
-![VLAN Verification](./show-vlan-brief.png)
+![VLAN Configuration](./02-vlan-configuration.png)
 
 ---
 
@@ -206,15 +206,28 @@ Fa0/5 → Trunking
 
 VLAN 10 and VLAN 20 should be allowed and active on the trunk.
 
-### Trunk Verification Screenshot
+### Trunk Verification
 
-![Trunk Verification](./show-interfaces-trunk.png)
+![Trunk Verification](./03-trunk-verification.png)
+
+---
+
+## Verify Router Subinterfaces
+
+The router should have separate subinterfaces for each VLAN:
+
+```text
+Fa0/0.10 → VLAN 10
+Fa0/0.20 → VLAN 20
+```
+
+### Router Subinterfaces
+
+![Router Subinterfaces](./04-router-subinterfaces.png)
 
 ---
 
 ## Verify Router Interfaces
-
-On the router:
 
 ```bash
 show ip interface brief
@@ -228,28 +241,9 @@ FastEthernet0/0.10   192.168.10.1   up/up
 FastEthernet0/0.20   192.168.20.1   up/up
 ```
 
-### Router Interface Verification Screenshot
+### Router Interface Verification
 
-![Router Interface Verification](./show-ip-interface-brief.png)
-
----
-
-## Verify Routing Table
-
-```bash
-show ip route
-```
-
-Expected connected networks:
-
-```text
-C 192.168.10.0/24
-C 192.168.20.0/24
-```
-
-### Routing Table Screenshot
-
-![Routing Table](./show-ip-route.png)
+![IP Interface Brief](./05-ip-interface-brief.png)
 
 ---
 
@@ -321,9 +315,9 @@ Expected:
 Successful
 ```
 
-### Same-VLAN Connectivity Screenshot
+### Same-VLAN Connectivity
 
-![Same-VLAN Connectivity](./same-vlan-ping.png)
+![Same-VLAN Ping](./06-same-vlan-ping.png)
 
 ---
 
@@ -347,9 +341,9 @@ Successful
 
 This confirms that traffic is successfully routed between VLAN 10 and VLAN 20 through the router.
 
-### Inter-VLAN Connectivity Screenshot
+### Inter-VLAN Connectivity
 
-![Inter-VLAN Connectivity](./inter-vlan-ping.png)
+![Inter-VLAN Ping](./07-inter-vlan-ping.png)
 
 ---
 
@@ -363,9 +357,9 @@ tracert 192.168.20.10
 
 The traffic should pass through the router before reaching the destination in VLAN 20.
 
-### Traceroute Screenshot
+### Traceroute Verification
 
-![Traceroute Verification](./traceroute.png)
+![Traceroute](./08-traceroute.png)
 
 ---
 
@@ -406,35 +400,35 @@ PC0
 
 ## Network Topology
 
-![Router-on-a-Stick Topology](./topology.png)
+![Router-on-a-Stick Network Topology](./01-topology.png)
 
-## VLAN Verification
+## VLAN Configuration
 
-![VLAN Verification](./show-vlan-brief.png)
+![VLAN Configuration](./02-vlan-configuration.png)
 
 ## Trunk Verification
 
-![Trunk Verification](./show-interfaces-trunk.png)
+![Trunk Verification](./03-trunk-verification.png)
+
+## Router Subinterfaces
+
+![Router Subinterfaces](./04-router-subinterfaces.png)
 
 ## Router Interface Verification
 
-![Router Interface Verification](./show-ip-interface-brief.png)
-
-## Routing Table
-
-![Routing Table](./show-ip-route.png)
+![IP Interface Brief](./05-ip-interface-brief.png)
 
 ## Same-VLAN Connectivity
 
-![Same-VLAN Connectivity](./same-vlan-ping.png)
+![Same-VLAN Ping](./06-same-vlan-ping.png)
 
 ## Inter-VLAN Connectivity
 
-![Inter-VLAN Connectivity](./inter-vlan-ping.png)
+![Inter-VLAN Ping](./07-inter-vlan-ping.png)
 
-## Traceroute
+## Traceroute Verification
 
-![Traceroute Verification](./traceroute.png)
+![Traceroute](./08-traceroute.png)
 
 ---
 
