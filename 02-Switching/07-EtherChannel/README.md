@@ -416,35 +416,45 @@ If one physical link fails, the remaining EtherChannel member links continue for
 
 # 📸 Screenshots
 
-The following screenshots are included to document the lab configuration and verification:
-
-### 1. Network Topology
+## 1. Network Topology
 
 ![Network Topology](01-topology.png)
 
-### 2. VLAN Configuration
+---
 
-*Add screenshot here.*
+## 2. VLAN Configuration
 
-### 3. EtherChannel Summary
+![VLAN Configuration](02-vlan-configuration.png)
 
-*Add screenshot here.*
+---
 
-### 4. Trunk Verification
+## 3. EtherChannel Summary
 
-*Add screenshot here.*
+![EtherChannel Summary](03-etherchannel-summary.png)
 
-### 5. Connectivity Test
+---
 
-*Add screenshot here.*
+## 4. Trunk Verification
 
-### 6. Link Failure Verification
+![Trunk Verification](04-trunk-verification.png)
 
-*Add screenshot here.*
+---
 
-### 7. Ping After Link Failure
+## 5. Connectivity Test
 
-*Add screenshot here.*
+![Connectivity Test](05-connectivity-test.png)
+
+---
+
+## 6. Link Failure Verification
+
+![Link Failure Test](06-link-failure-test.png)
+
+---
+
+## 7. Ping After Link Failure
+
+![Ping After Link Failure](05-connectivity-test.png)
 
 ---
 
