@@ -122,7 +122,6 @@ networking-labs
 - Inter-VLAN Routing
 - Router-on-a-Stick
 - STP
-- Port Security
 - EtherChannel
 
 ## 03. Routing
