@@ -1,396 +1,153 @@
-# VLAN and Trunk Configuration
+# 01 - Static Routing
 
 ## 📖 Overview
+This lab demonstrates the fundamental configuration, operation, and verification of **IPv4 Static Routing** in a multi-router Cisco network environment. Static routing involves manually configuring routes in the router's routing table to reach destination networks that are not directly connected. 
 
-In this lab, two Cisco Layer 2 switches are configured with VLAN 10 and VLAN 20. Access ports are assigned to the appropriate VLANs, and a trunk link is configured between the two switches to carry traffic from multiple VLANs.
-
-The lab demonstrates how devices in the same VLAN can communicate across different switches using a trunk link, while devices in different VLANs cannot communicate without Layer 3 routing.
-
----
+In this lab, three Cisco routers (**R1**, **R2**, and **R3**) interconnect two isolated Local Area Networks (**LAN 1** and **LAN 2**). Point-to-point WAN links utilize power-efficient `/30` subnets, and manual static routes are defined using next-hop IP addresses to establish complete end-to-end bidirectional communication between end devices.
 
 ## 🎯 Objectives
-
-- Create VLAN 10 and VLAN 20.
-- Assign switch access ports to the appropriate VLANs.
-- Configure a trunk link between two Cisco switches.
-- Verify VLAN membership.
-- Verify trunk operation.
-- Test same-VLAN communication across two switches.
-- Test communication between different VLANs.
-- Understand the difference between access ports and trunk ports.
-
----
+* Design and implement a multi-router topology connecting distinct subnets.
+* Apply efficient IPv4 addressing, using `/24` subnets for LANs and `/30` subnets for point-to-point WAN links.
+* Configure static routes on edge and intermediate routers using the next-hop IPv4 addressing method.
+* Verify interface operational states (`up/up`) and inspect routing tables for static route entries (`S`).
+* Validate end-to-end ICMP reachability (`ping`) and trace hop-by-hop packet forwarding paths (`tracert`).
+* Analyze the forwarding decisions made by routers at each step of the transit path.
 
 ## 🖥️ Devices Used
 
-- 2 × Cisco 2960 Switches
-- 8 × PCs
-- Cisco Packet Tracer
-
----
+| Device Type | Device Model | Quantity | Role / Description |
+|---|---|---|---|
+| **Router** | Cisco 2911 / 1941 | 3 | Core & Edge Routing Devices (R1, R2, R3) |
+| **End Device** | Generic PC | 2 | End Hosts for LAN 1 (PC1) and LAN 2 (PC2) |
+| **Cabling** | Copper Straight-Through / Cross-Over | 4 | Physical media connections for LAN & WAN links |
 
 ## 🌐 Network Topology
-
-![VLAN Trunk Topology](topology.png)
-
----
+![Network Topology](01-topology.png)
 
 ## 🔌 Port Mapping
 
-| Switch | Port | Connected Device | VLAN |
-|---|---|---|---|
-| SW0 | Fa0/1 | PC0 | VLAN 10 |
-| SW0 | Fa0/2 | PC2 | VLAN 10 |
-| SW0 | Fa0/3 | PC3 | VLAN 20 |
-| SW0 | Fa0/4 | PC4 | VLAN 20 |
-| SW0 | Fa0/5 | SW1 Fa0/5 | Trunk |
-| SW1 | Fa0/1 | PC1 | VLAN 10 |
-| SW1 | Fa0/2 | PC5 | VLAN 10 |
-| SW1 | Fa0/3 | PC6 | VLAN 20 |
-| SW1 | Fa0/4 | PC7 | VLAN 20 |
-
----
-
-## 📊 VLAN Configuration
-
-| VLAN ID | VLAN Name | Purpose |
-|---|---|---|
-| 10 | HR | HR Department |
-| 20 | SALES | Sales Department |
-
----
+| Source Device | Source Interface | Connected Device | Connected Interface | Link Type |
+|---|---|---|---|---|
+| **PC1** | FastEthernet0 | **R1** | FastEthernet0/0 | Local LAN Link (LAN 1) |
+| **R1** | FastEthernet0/1 | **R2** | FastEthernet0/0 | Point-to-Point WAN Link |
+| **R2** | FastEthernet0/1 | **R3** | FastEthernet0/0 | Point-to-Point WAN Link |
+| **R3** | FastEthernet0/1 | **PC2** | FastEthernet0 | Local LAN Link (LAN 2) |
 
 ## 🌐 IP Addressing
 
-| Device | Switch Port | VLAN | IP Address | Subnet Mask |
-|---|---|---:|---|---|
-| PC0 | SW0 Fa0/1 | 10 | 192.168.10.10 | 255.255.255.0 |
-| PC2 | SW0 Fa0/2 | 10 | 192.168.10.20 | 255.255.255.0 |
-| PC3 | SW0 Fa0/3 | 20 | 192.168.20.10 | 255.255.255.0 |
-| PC4 | SW0 Fa0/4 | 20 | 192.168.20.20 | 255.255.255.0 |
-| PC1 | SW1 Fa0/1 | 10 | 192.168.10.30 | 255.255.255.0 |
-| PC5 | SW1 Fa0/2 | 10 | 192.168.10.40 | 255.255.255.0 |
-| PC6 | SW1 Fa0/3 | 20 | 192.168.20.30 | 255.255.255.0 |
-| PC7 | SW1 Fa0/4 | 20 | 192.168.20.40 | 255.255.255.0 |
+| Device | Interface | IPv4 Address | Subnet Mask | Default Gateway | Connected Network / Role |
+|---|---|---|---|---|---|
+| **R1** | FastEthernet0/0 | `192.168.10.1` | `255.255.255.0` | N/A | LAN 1 Gateway |
+| **R1** | FastEthernet0/1 | `10.0.12.1` | `255.255.255.252` | N/A | WAN to R2 |
+| **R2** | FastEthernet0/0 | `10.0.12.2` | `255.255.255.252` | N/A | WAN to R1 |
+| **R2** | FastEthernet0/1 | `10.0.23.1` | `255.255.255.252` | N/A | WAN to R3 |
+| **R3** | FastEthernet0/0 | `10.0.23.2` | `255.255.255.252` | N/A | WAN to R2 |
+| **R3** | FastEthernet0/1 | `192.168.20.1` | `255.255.255.0` | N/A | LAN 2 Gateway |
+| **PC1** | FastEthernet0 | `192.168.10.10` | `255.255.255.0` | `192.168.10.1` | Host on LAN 1 |
+| **PC2** | FastEthernet0 | `192.168.20.10` | `255.255.255.0` | `192.168.20.1` | Host on LAN 2 |
 
-> Default gateway is not configured because Inter-VLAN Routing is not used in this lab.
+## ⚙️ Configuration
 
----
+### 1. Configure R1
+Configure LAN/WAN interfaces and a static route to LAN 2 (`192.168.20.0/24`) via R2's next-hop IP.
 
-# ⚙️ Configuration
-
-## 1. Configure SW0
-
-### Create VLANs
-
-```bash
+````text
 enable
 configure terminal
+hostname R1
 
-hostname SW0
+interface FastEthernet0/0
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+ exit
 
-vlan 10
-name HR
-exit
+interface FastEthernet0/1
+ ip address 10.0.12.1 255.255.255.252
+ no shutdown
+ exit
 
-vlan 20
-name SALES
-exit
-```
-
-### Configure VLAN 10 Access Ports
-
-```bash
-interface range fa0/1 - 2
-switchport mode access
-switchport access vlan 10
-exit
-```
-
-### Configure VLAN 20 Access Ports
-
-```bash
-interface range fa0/3 - 4
-switchport mode access
-switchport access vlan 20
-exit
-```
-
-### Configure Trunk Port
-
-```bash
-interface fa0/5
-switchport mode trunk
-exit
-```
-
-### Save Configuration
-
-```bash
+ip route 192.168.20.0 255.255.255.0 10.0.12.2
 end
 copy running-config startup-config
-```
+````
 
----
+### 2. Configure R2
+Configure WAN interfaces and static routes to both LAN 1 (`192.168.10.0/24`) and LAN 2 (`192.168.20.0/24`).
 
-## 2. Configure SW1
-
-### Create VLANs
-
-```bash
+````text
 enable
 configure terminal
+hostname R2
 
-hostname SW1
+interface FastEthernet0/0
+ ip address 10.0.12.2 255.255.255.252
+ no shutdown
+ exit
 
-vlan 10
-name HR
-exit
+interface FastEthernet0/1
+ ip address 10.0.23.1 255.255.255.252
+ no shutdown
+ exit
 
-vlan 20
-name SALES
-exit
-```
-
-### Configure VLAN 10 Access Ports
-
-```bash
-interface range fa0/1 - 2
-switchport mode access
-switchport access vlan 10
-exit
-```
-
-### Configure VLAN 20 Access Ports
-
-```bash
-interface range fa0/3 - 4
-switchport mode access
-switchport access vlan 20
-exit
-```
-
-### Configure Trunk Port
-
-```bash
-interface fa0/5
-switchport mode trunk
-exit
-```
-
-### Save Configuration
-
-```bash
+ip route 192.168.10.0 255.255.255.0 10.0.12.1
+ip route 192.168.20.0 255.255.255.0 10.0.23.2
 end
 copy running-config startup-config
-```
+````
 
----
+### 3. Configure R3
+Configure LAN/WAN interfaces and a static route to LAN 1 (`192.168.10.0/24`) via R2's next-hop IP.
 
-# 🔍 Verification
+````text
+enable
+configure terminal
+hostname R3
 
-## Verify VLAN Configuration
+interface FastEthernet0/0
+ ip address 10.0.23.2 255.255.255.252
+ no shutdown
+ exit
 
-On both switches:
+interface FastEthernet0/1
+ ip address 192.168.20.1 255.255.255.0
+ no shutdown
+ exit
 
-```bash
-show vlan brief
-```
+ip route 192.168.10.0 255.255.255.0 10.0.23.1
+end
+copy running-config startup-config
+````
 
-Expected:
+## 🔍 Verification
 
-```text
-VLAN 10
-Fa0/1
-Fa0/2
+### Verify Interface Status
+This command verifies that the physical interfaces are up and assigned the correct IP addresses.
+````text
+show ip interface brief
+````
+**Expected Result:**  
+Both `FastEthernet0/0` and `FastEthernet0/1` should show `Status: up` and `Protocol: up`.
 
-VLAN 20
-Fa0/3
-Fa0/4
-```
+### Verify Routing Table
+This command verifies that the static routes have been successfully injected into the router's routing table.
+````text
+show ip route
+````
+**Expected Result:**  
+You should see directly connected networks marked with a `C` (or `L` for local IPs) and the static route marked with an `S`. Example for R1:
+`S 192.168.20.0/24 [1/0] via 10.0.12.2`
 
----
+## 🧪 Connectivity Testing
 
-## Verify Trunk Configuration
-
-On both switches:
-
-```bash
-show interfaces trunk
-```
-
-The `Fa0/5` interface should be displayed as a trunking port.
-
----
-
-# 🧪 Connectivity Testing
-
-## Same VLAN Communication
-
-### VLAN 10
-
-PC0 → PC1:
-
-```bash
-ping 192.168.10.30
-```
-
-Expected result:
-
-```text
-Successful
-```
-
-PC2 → PC5:
-
-```bash
-ping 192.168.10.40
-```
-
-Expected result:
-
-```text
-Successful
-```
-
-### VLAN 20
-
-PC3 → PC6:
-
-```bash
-ping 192.168.20.30
-```
-
-Expected result:
-
-```text
-Successful
-```
-
-PC4 → PC7:
-
-```bash
-ping 192.168.20.40
-```
-
-Expected result:
-
-```text
-Successful
-```
-
----
-
-## Different VLAN Communication
-
-PC0 → PC3:
-
-```bash
+### PC1 → PC2
+Test complete end-to-end connectivity across the network.
+````text
 ping 192.168.20.10
-```
+````
+**Expected Result:**  
+Successful. The first packet may drop (Request timed out) due to ARP resolution across the routers, but subsequent packets should receive a reply.
 
-Expected result:
-
-```text
-Unsuccessful
-```
-
-PC2 → PC6:
-
-```bash
-ping 192.168.20.30
-```
-
-Expected result:
-
-```text
-Unsuccessful
-```
-
-This is expected because VLAN 10 and VLAN 20 are separate Layer 2 broadcast domains. Communication between different VLANs requires a Layer 3 routing device.
-
----
-
-# 📸 Verification Screenshots
-
-## VLAN Configuration
-
-![VLAN Configuration](vlan-configuration.png)
-
-## VLAN Verification
-
-![Show VLAN Brief](show-vlan-brief.png)
-
-## Trunk Configuration
-
-![Trunk Configuration](trunk-configuration.png)
-
-## Trunk Verification
-
-![Show Interfaces Trunk](show-interfaces-trunk.png)
-
-## Same VLAN Connectivity
-
-![Same VLAN Ping](same-vlan-ping.png)
-
-## Different VLAN Connectivity
-
-![Different VLAN Ping](different-vlan-ping.png)
-
----
-
-# 📚 Concepts Covered
-
-- VLAN
-- VLAN 10 and VLAN 20
-- Access Port
-- Trunk Port
-- 802.1Q Trunking
-- VLAN Segmentation
-- Broadcast Domain
-- Inter-Switch Connectivity
-- Same-VLAN Communication
-- Inter-VLAN Communication
-- `show vlan brief`
-- `show interfaces trunk`
-
----
-
-# 🎓 Learning Outcome
-
-After completing this lab, I learned how to configure VLANs on multiple Cisco switches, assign access ports to different VLANs, configure a trunk link between switches, verify VLAN and trunk status, and test communication between devices across the network.
-
-This lab helped me understand how trunk links carry multiple VLANs between switches while maintaining VLAN separation.
-
----
-
-# 💡 Interview Questions
-
-1. What is a VLAN?
-2. What is a trunk port?
-3. What is an access port?
-4. Why is a trunk link required between switches?
-5. What is the difference between an access port and a trunk port?
-6. What is 802.1Q?
-7. Can a trunk port carry multiple VLANs?
-8. Can devices in different VLANs communicate without a router?
-9. What command is used to verify VLANs?
-10. What command is used to verify trunking?
-11. What is a broadcast domain?
-12. Why does same-VLAN communication work across two switches?
-
----
-
-## 🛠️ Software Used
-
-- Cisco Packet Tracer 9.0.1.0858
-
----
-
-## 👨‍💻 Author
-
-**Mohamed Ashik**
-
-Aspiring Network Engineer | CCNA (200-301) Student
-
-GitHub: [mohamedashik-cpu](https://github.com/mohamedashik-cpu)
+### PC1 → PC2 Path Trace
+Verify the exact path the packets take to reach the destination.
+````text
+tracert 192.168.20.10
