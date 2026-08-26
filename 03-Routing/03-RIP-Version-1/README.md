@@ -19,13 +19,13 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 | Device | Model | Qty | Role |
 |---|---|---:|---|
 | Router | Cisco 2911 | 3 | R1, R2, R3 |
-| PC | Generic PC | 2 | PC1 and PC3 |
+| PC | Generic PC | 2 | PC1 and PC2 |
 | Cable | Copper | 4 | LAN/WAN links |
 
 ## 🌐 Network Topology
 ![Network Topology](01-topology.png)
 
-**Path:** PC1 → R1 → R2 → R3 → PC3
+**Path:** PC1 → R1 → R2 → R3 → PC2
 
 ## 🔌 Port Mapping
 | Source | Interface | Destination | Interface | Link |
@@ -33,7 +33,7 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 | PC1 | Fa0 | R1 | Gi0/0 | LAN |
 | R1 | Gi0/1 | R2 | Gi0/1 | WAN |
 | R2 | Gi0/0 | R3 | Gi0/1 | WAN |
-| R3 | Gi0/0 | PC3 | Fa0 | LAN |
+| R3 | Gi0/0 | PC2 | Fa0 | LAN |
 
 ## 🌐 IP Addressing
 | Device | Interface | IPv4 | Mask | Gateway | Network |
@@ -45,7 +45,7 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 | R3 | Gi0/1 | `10.0.23.2` | `255.255.255.0` | N/A | `10.0.23.0/24` |
 | R3 | Gi0/0 | `192.168.3.1` | `255.255.255.0` | N/A | `192.168.3.0/24` |
 | PC1 | Fa0 | `192.168.1.10` | `255.255.255.0` | `192.168.1.1` | `192.168.1.0/24` |
-| PC3 | Fa0 | `192.168.3.10` | `255.255.255.0` | `192.168.3.1` | `192.168.3.0/24` |
+| PC2 | Fa0 | `192.168.3.10` | `255.255.255.0` | `192.168.3.1` | `192.168.3.0/24` |
 
 ## ⚙️ Configuration
 
@@ -116,7 +116,7 @@ copy running-config startup-config
 
 ## 💻 PC Configuration
 **PC1:** `192.168.1.10 /24`, gateway `192.168.1.1`  
-**PC3:** `192.168.3.10 /24`, gateway `192.168.3.1`
+**PC2:** `192.168.3.10 /24`, gateway `192.168.3.1`
 
 ## 🔍 Verification
 
@@ -144,7 +144,7 @@ From PC1:
 ```text
 ping 192.168.3.10
 ```
-From PC3:
+From PC2:
 ```text
 ping 192.168.1.10
 ```
@@ -158,13 +158,13 @@ Windows Packet Tracer PC:
 tracert 192.168.3.10
 ```
 
-Expected path: **PC1 → R1 → R2 → R3 → PC3**.
+Expected path: **PC1 → R1 → R2 → R3 → PC2**.
 
 ## 🔄 Traffic Flow
 1. PC1 sends the remote packet to default gateway R1.
 2. R1 uses its RIP-learned route toward R2.
 3. R2 forwards toward R3.
-4. R3 delivers the packet to PC3.
+4. R3 delivers the packet to PC2.
 5. The reply follows the learned reverse route R3 → R2 → R1 → PC1.
 
 ## 📸 Verification Screenshots
@@ -172,7 +172,7 @@ Expected path: **PC1 → R1 → R2 → R3 → PC3**.
 2. `02-ip-addressing.png` → Interface/IP verification.
 3. `03-rip-configuration.png` → `show ip protocols`.
 4. `04-rip-routing-table.png` → RIP `R` routes.
-5. `05-connectivity-test.png` → Successful PC1-to-PC3 ping.
+5. `05-connectivity-test.png` → Successful PC1-to-PC2 ping.
 6. `06-traceroute-test.png` → Routed path verification.
 
 ## ⚠️ RIPv1 Limitations
