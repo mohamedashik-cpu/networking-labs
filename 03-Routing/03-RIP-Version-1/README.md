@@ -18,7 +18,7 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 ## 🖥️ Devices Used
 | Device | Model | Qty | Role |
 |---|---|---:|---|
-| Router | Cisco 2911 / 1941 | 3 | R1, R2, R3 |
+| Router | Cisco 2911 | 3 | R1, R2, R3 |
 | PC | Generic PC | 2 | PC1 and PC3 |
 | Cable | Copper | 4 | LAN/WAN links |
 
@@ -30,20 +30,20 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 ## 🔌 Port Mapping
 | Source | Interface | Destination | Interface | Link |
 |---|---|---|---|---|
-| PC1 | Fa0 | R1 | Fa0/0 | LAN |
-| R1 | Fa0/1 | R2 | Fa0/1 | WAN |
-| R2 | Fa0/0 | R3 | Fa0/1 | WAN |
-| R3 | Fa0/0 | PC3 | Fa0 | LAN |
+| PC1 | Fa0 | R1 | Gi0/0 | LAN |
+| R1 | Gi0/1 | R2 | Gi0/1 | WAN |
+| R2 | Gi0/0 | R3 | Gi0/1 | WAN |
+| R3 | Gi0/0 | PC3 | Fa0 | LAN |
 
 ## 🌐 IP Addressing
 | Device | Interface | IPv4 | Mask | Gateway | Network |
 |---|---|---|---|---|---|
-| R1 | Fa0/0 | `192.168.1.1` | `255.255.255.0` | N/A | `192.168.1.0/24` |
-| R1 | Fa0/1 | `10.0.12.1` | `255.255.255.0` | N/A | `10.0.12.0/24` |
-| R2 | Fa0/1 | `10.0.12.2` | `255.255.255.0` | N/A | `10.0.12.0/24` |
-| R2 | Fa0/0 | `10.0.23.1` | `255.255.255.0` | N/A | `10.0.23.0/24` |
-| R3 | Fa0/1 | `10.0.23.2` | `255.255.255.0` | N/A | `10.0.23.0/24` |
-| R3 | Fa0/0 | `192.168.3.1` | `255.255.255.0` | N/A | `192.168.3.0/24` |
+| R1 | Gi0/0 | `192.168.1.1` | `255.255.255.0` | N/A | `192.168.1.0/24` |
+| R1 | Gi0/1 | `10.0.12.1` | `255.255.255.0` | N/A | `10.0.12.0/24` |
+| R2 | Gi0/1 | `10.0.12.2` | `255.255.255.0` | N/A | `10.0.12.0/24` |
+| R2 | Gi0/0 | `10.0.23.1` | `255.255.255.0` | N/A | `10.0.23.0/24` |
+| R3 | Gi0/1 | `10.0.23.2` | `255.255.255.0` | N/A | `10.0.23.0/24` |
+| R3 | Gi0/0 | `192.168.3.1` | `255.255.255.0` | N/A | `192.168.3.0/24` |
 | PC1 | Fa0 | `192.168.1.10` | `255.255.255.0` | `192.168.1.1` | `192.168.1.0/24` |
 | PC3 | Fa0 | `192.168.3.10` | `255.255.255.0` | `192.168.3.1` | `192.168.3.0/24` |
 
@@ -54,11 +54,11 @@ RIPv1 does not carry subnet-mask information in routing updates, so this lab use
 enable
 configure terminal
 hostname R1
-interface FastEthernet0/0
+interface GigabitEthernet0/0
  ip address 192.168.1.1 255.255.255.0
  no shutdown
  exit
-interface FastEthernet0/1
+interface GigabitEthernet0/1
  ip address 10.0.12.1 255.255.255.0
  no shutdown
  exit
@@ -76,11 +76,11 @@ copy running-config startup-config
 enable
 configure terminal
 hostname R2
-interface FastEthernet0/0
+interface GigabitEthernet0/0
  ip address 10.0.23.1 255.255.255.0
  no shutdown
  exit
-interface FastEthernet0/1
+interface GigabitEthernet0/1
  ip address 10.0.12.2 255.255.255.0
  no shutdown
  exit
@@ -97,11 +97,11 @@ copy running-config startup-config
 enable
 configure terminal
 hostname R3
-interface FastEthernet0/0
+interface GigabitEthernet0/0
  ip address 192.168.3.1 255.255.255.0
  no shutdown
  exit
-interface FastEthernet0/1
+interface GigabitEthernet0/1
  ip address 10.0.23.2 255.255.255.0
  no shutdown
  exit
