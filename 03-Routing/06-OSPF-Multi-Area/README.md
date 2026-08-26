@@ -1,15 +1,15 @@
 # 06 - OSPF Multi-Area
 
 ## 📖 Overview
-This lab demonstrates **OSPF Multi-Area** routing using three Cisco 2911 routers and two PCs. The topology contains the OSPF backbone **Area 0** and a second OSPF **Area 1**, demonstrating how an **Area Border Router (ABR)** connects different OSPF areas and allows inter-area routing.
+This lab demonstrates **OSPF Multi-Area** routing using three Cisco 2911 routers and two PCs. The topology contains the OSPF backbone **Area 0** and a second OSPF **Area 1**, demonstrating how an **Area Border Router (ABR)** connects different OSPF areas and enables inter-area routing.
 
-R1 acts as the ABR between Area 1 and Area 0. R2 and R3 operate in Area 0. OSPF dynamically exchanges link-state information within each area and provides routes between the two LANs.
+**R2 acts as the ABR** because it has one OSPF interface in Area 1 and another OSPF interface in Area 0.
 
 ## 🎯 Objectives
 - Build a multi-area OSPF IPv4 topology.
 - Configure Area 0 as the OSPF backbone.
 - Configure Area 1 as a non-backbone area.
-- Configure R1 as an Area Border Router (ABR).
+- Configure R2 as an Area Border Router (ABR).
 - Configure unique OSPF router IDs.
 - Advertise LAN and transit networks using wildcard masks.
 - Verify OSPF neighbor relationships.
@@ -20,19 +20,19 @@ R1 acts as the ABR between Area 1 and Area 0. R2 and R3 operate in Area 0. OSPF 
 ## 🖥️ Devices Used
 | Device | Model | Qty | Role |
 |---|---|---:|---|
-| Router | Cisco 2911 | 3 | R1 (ABR), R2, R3 |
+| Router | Cisco 2911 | 3 | R1, R2 (ABR), R3 |
 | PC | Generic PC | 2 | PC1 and PC2 |
 | Cable | Copper | 4 | LAN/WAN links |
 
 ## 🌐 Network Topology
 ![Network Topology](01-topology.png)
 
-**Path:** PC1 → R1 → R2 → R3 → PC2
+**Path:** PC1 → R1 → R2 (ABR) → R3 → PC2
 
 **OSPF Areas:**
 - **Area 1:** PC1 LAN + R1–R2 link
 - **Area 0:** R2–R3 link + PC2 LAN
-- **R1:** ABR connecting Area 1 and Area 0
+- **R2:** ABR connecting Area 1 and Area 0
 
 ## 🔌 Port Mapping
 | Source | Interface | Destination | Interface | OSPF Area |
@@ -56,17 +56,18 @@ R1 acts as the ABR between Area 1 and Area 0. R2 and R3 operate in Area 0. OSPF 
 
 ## ⚙️ OSPF Area Design
 ```text
-              AREA 1                    AREA 0
+              AREA 1                         AREA 0
 
-PC1 ─── R1 (ABR) ─── R2 ───────── R3 ─── PC2
-         |             |             |
-       Gi0/0         Gi0/1         Gi0/0
-       Gi0/1         Gi0/0         Gi0/1
+PC1 ─── R1 ─── R2 (ABR) ───────── R3 ─── PC2
+               |                    |
+             Gi0/1                Gi0/1
+             Area 1               Area 0
 
-        192.168.1.0   10.0.12.0     10.0.23.0   192.168.3.0
+             Gi0/0                Gi0/0
+             Area 0               Area 0
 ```
 
-R1 has interfaces in **Area 1 only** in this simplified three-router design; R2 is the router connected to both Area 1 and Area 0 and therefore acts as the actual **ABR**. To keep the topology and terminology technically correct, **R2 is the ABR** because it has one OSPF interface in Area 1 and another in Area 0.
+R1 participates only in Area 1. R2 has one interface in Area 1 and one interface in Area 0, so **R2 is the ABR**. R3 participates only in Area 0.
 
 ## ⚙️ Configuration
 
@@ -276,7 +277,7 @@ Expected path: **PC1 → R1 → R2 (ABR) → R3 → PC2**.
 - Ping and traceroute
 
 ## 🎓 Learning Outcome
-I demonstrated a multi-area OSPF design using Area 1 and the Area 0 backbone. I configured an ABR, verified OSPF neighbor adjacencies across different areas, identified inter-area routes, and tested end-to-end connectivity between LANs in different OSPF areas.
+I demonstrated a multi-area OSPF design using Area 1 and the Area 0 backbone. I configured R2 as an ABR, verified OSPF neighbor adjacencies across different areas, identified inter-area routes, and tested end-to-end connectivity between LANs in different OSPF areas.
 
 ## 💡 Interview Questions
 1. **What is OSPF Multi-Area?** — An OSPF design that divides a routing domain into multiple areas to improve scalability.
