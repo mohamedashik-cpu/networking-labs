@@ -82,7 +82,9 @@ The Server device is configured with:
 
 HTTP is enabled on the Packet Tracer Server.
 
-Direct access: `http://192.168.10.10`
+Direct access:
+
+`http://192.168.10.10`
 
 ### HTTPS Service
 
@@ -156,17 +158,18 @@ Client → DNS Query → DNS Response → HTTP Request → HTTP Response → Web
 
 ## Screenshots
 
-- [ ] Network topology
-- [ ] IP configuration
-- [ ] HTTP service configuration
-- [ ] DNS configuration
-- [ ] Custom web page
-- [ ] Browser access using server IP
-- [ ] Browser access using DNS hostname
-- [ ] Router verification
-- [ ] Switch verification
-- [ ] DNS traffic in Simulation Mode
-- [ ] HTTP traffic in Simulation Mode
+The following screenshots are included as project evidence:
+
+| No. | File | Evidence |
+|---|---|---|
+| 01 | `01-topology.png` | Network topology and device connections |
+| 02 | `02-ip-addressing.png` | IP addressing configuration |
+| 03 | `03-router-configuration.png` | Router interface configuration and verification |
+| 04 | `04-http-server-configuration.png` | HTTP service and web server configuration |
+| 05 | `05-dns-configuration.png` | DNS service and A record configuration |
+| 06 | `06-web-browser-test.png` | Successful web browser access |
+| 07 | `07-connectivity-test.png` | Connectivity and DNS resolution tests |
+| 08 | `08-dns-http-traffic.png` | DNS and HTTP traffic observed in Simulation Mode |
 
 ## Concepts Learned
 
@@ -192,5 +195,5 @@ After completing this lab, I can configure a basic web-server environment in Cis
 
 **Mohamed Ashik**
 
-Cisco Networking Portfolio
+Cisco Networking Portfolio  
 GitHub: `mohamedashik-cpu/networking-labs`
