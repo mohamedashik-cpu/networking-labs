@@ -18,11 +18,7 @@ This lab demonstrates a basic web server environment using Cisco Packet Tracer. 
 
 ## Network Topology
 
-PC0 ─────┐
-         │
-PC1 ─────┤
-         │
-Server ──┤── SW1 ─── R1
+![Web Server Topology](01-topology.png)
 
 ## Devices Used
 
@@ -53,6 +49,8 @@ Network: `192.168.10.0/24`
 | PC0 | Fa0 | 192.168.10.11 | 255.255.255.0 | 192.168.10.1 | 192.168.10.10 |
 | PC1 | Fa0 | 192.168.10.12 | 255.255.255.0 | 192.168.10.1 | 192.168.10.10 |
 
+![IP Addressing](02-ip-addressing.png)
+
 ## Network Configuration
 
 ### Router Configuration
@@ -64,6 +62,8 @@ Network: `192.168.10.0/24`
     no shutdown
     exit
     end
+
+![Router Configuration](03-router-configuration.png)
 
 ### Router Verification
 
@@ -86,6 +86,8 @@ Direct access:
 
 `http://192.168.10.10`
 
+![HTTP Server Configuration](04-http-server-configuration.png)
+
 ### HTTPS Service
 
 HTTPS may be enabled on the Packet Tracer Server for service-level testing.
@@ -97,6 +99,8 @@ DNS service is enabled on the Server.
 | Hostname | Record Type | Address |
 |---|---|---|
 | `www.ashikweb.local` | A | `192.168.10.10` |
+
+![DNS Configuration](05-dns-configuration.png)
 
 ## Web Page
 
@@ -117,7 +121,7 @@ Expected destination: `192.168.10.10`
 
 ### Browser Testing
 
-Test from both client PCs:
+Test from the client PCs:
 
 `http://192.168.10.10`
 
@@ -125,7 +129,15 @@ and:
 
 `http://www.ashikweb.local`
 
-A successful test should display the configured web page.
+A successful test displays the configured web page.
+
+![Web Browser Test](06-web-browser-test.png)
+
+### Connectivity Testing
+
+Client connectivity and DNS resolution were verified from the Packet Tracer PCs.
+
+![Connectivity Test](07-connectivity-test.png)
 
 ### Switch Verification
 
@@ -134,11 +146,14 @@ A successful test should display the configured web page.
 
 ### Simulation Mode
 
-Observe:
+The DNS and HTTP communication can be observed in Simulation Mode:
+
 1. DNS Query
 2. DNS Response
 3. HTTP Request
 4. HTTP Response
+
+![DNS and HTTP Traffic](08-dns-http-traffic.png)
 
 ## Traffic Flow
 
@@ -156,20 +171,17 @@ Client → DNS Query → DNS Response → HTTP Request → HTTP Response → Web
 | Test server connectivity | `ping 192.168.10.10` |
 | Test DNS resolution | `ping www.ashikweb.local` |
 
-## Screenshots
+## Files
 
-The following screenshots are included as project evidence:
-
-| No. | File | Evidence |
-|---|---|---|
-| 01 | `01-topology.png` | Network topology and device connections |
-| 02 | `02-ip-addressing.png` | IP addressing configuration |
-| 03 | `03-router-configuration.png` | Router interface configuration and verification |
-| 04 | `04-http-server-configuration.png` | HTTP service and web server configuration |
-| 05 | `05-dns-configuration.png` | DNS service and A record configuration |
-| 06 | `06-web-browser-test.png` | Successful web browser access |
-| 07 | `07-connectivity-test.png` | Connectivity and DNS resolution tests |
-| 08 | `08-dns-http-traffic.png` | DNS and HTTP traffic observed in Simulation Mode |
+- [Packet Tracer Lab](06-Web-Server-IIS.pkt)
+- Network topology screenshot
+- IP addressing screenshot
+- Router configuration screenshot
+- HTTP server configuration screenshot
+- DNS configuration screenshot
+- Web browser test screenshot
+- Connectivity test screenshot
+- DNS and HTTP traffic screenshot
 
 ## Concepts Learned
 
@@ -190,6 +202,10 @@ After completing this lab, I can configure a basic web-server environment in Cis
 ## Software Used
 
 - Cisco Packet Tracer
+
+## Status
+
+✅ Completed
 
 ## Author
 
