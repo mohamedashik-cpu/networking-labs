@@ -64,15 +64,18 @@ end
 
 The FTP service was enabled on the Server device.
 
-FTP user configured for the lab:
-
-- Username: `ashik`
-- Password: `cisco123`
-- Permissions: Read and Write
-
 ![FTP Server Configuration](04-ftp-server-configuration.png)
 
-## FTP User Authentication
+## FTP User Configuration
+
+The FTP user account was configured with read/write permissions for the lab.
+
+- Username: `ashik`
+- Permissions: Read and Write
+
+![FTP User Configuration](05-ftp-user-configuration.png)
+
+## FTP Login and Authentication
 
 The FTP client successfully connected to the server and authenticated using the configured user account.
 
