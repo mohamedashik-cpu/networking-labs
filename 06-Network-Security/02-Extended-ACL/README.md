@@ -96,17 +96,17 @@ interface gigabitEthernet 0/0
 
 PC0 attempted to access Server0 using HTTP after ACL enforcement.
 
-**Expected behavior:** HTTP traffic is blocked by ACL 110.
+**Verified result:** HTTP traffic was blocked by ACL 110.
 
-![HTTP Block Test](./03-http-block-test.png)
+![HTTP Block Test](./02-http-block-test.png)
 
 ### ICMP Test
 
 PC0 tested connectivity to Server0 using ICMP.
 
-**Expected behavior:** ICMP traffic is permitted by ACL 110.
+**Verified result:** ICMP traffic was permitted by ACL 110.
 
-![ICMP Allow Test](./04-icmp-allow-test.png)
+![ICMP Allow Test](./03-icmp-allow-test.png)
 
 ## ACL Verification
 
@@ -116,7 +116,7 @@ The ACL was verified using:
 show access-lists 110
 ```
 
-![ACL Verification](./05-acl-verification.png)
+![ACL Verification](./04-acl-verification.png)
 
 ## Interface Verification
 
@@ -199,9 +199,9 @@ This lab demonstrates how an Extended ACL can provide more granular traffic cont
 - `02-Extended-ACL.pkt`
 - `01-topology.png`
 - `02-before-acl-http-success.png`
-- `03-http-block-test.png`
-- `04-icmp-allow-test.png`
-- `05-acl-verification.png`
+- `02-http-block-test.png`
+- `03-icmp-allow-test.png`
+- `04-acl-verification.png`
 - `06-router-configuration.png`
 - `07-interface-verification.png`
 
