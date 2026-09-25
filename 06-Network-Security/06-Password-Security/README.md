@@ -56,7 +56,7 @@ enable secret Cisco@123
 service password-encryption
 ```
 
-![Enable Password Security](03-basic-hardening.png)
+![Enable Password Security](03-enable-password-security.png)
 
 ### Key Points
 
@@ -79,7 +79,7 @@ line console 0
  logging synchronous
 ```
 
-![Console Password Security](04-console-hardening.png)
+![Console Password Security](04-console-password.png)
 
 ### Verification
 
@@ -98,7 +98,7 @@ line vty 0 4
  exec-timeout 5 0
 ```
 
-![VTY Password Security](05-vty-hardening.png)
+![VTY Password Security](05-vty-password.png)
 
 ### Verification
 
@@ -145,17 +145,15 @@ The following tests were completed:
 - Password entries were verified in encrypted form in the running configuration.
 - Console and VTY session timeouts were verified in the configuration.
 
-![Authentication Tests](07-access-test.png)
+![Authentication Tests](06-authentication-tests.png)
 
 ---
 
-## Unused Interfaces
+## Final Connectivity Verification
 
-The router's unused interfaces remained administratively shut down.
+The final connectivity test was captured after completing the password-security configuration.
 
-![Unused Interface Verification](06-unused-interfaces.png)
-
-This keeps the lab router configuration consistent with basic device-hardening practices.
+![Final Ping Verification](07-final-ping.png)
 
 ---
 
@@ -237,16 +235,12 @@ R1 G0/0
 |---|---|
 | `01-topology.png` | Packet Tracer topology |
 | `02-ip-connectivity.png` | IP/interface verification |
-| `03-basic-hardening.png` | Privileged password configuration |
-| `04-console-hardening.png` | Console password configuration |
-| `05-vty-hardening.png` | VTY password configuration |
-| `06-unused-interfaces.png` | Interface-state verification |
-| `07-access-test.png` | Authentication/access testing |
-| `05-Device-Hardening.pkt` | Packet Tracer project file currently uploaded in this folder |
-
-> **File note:** The Packet Tracer file currently uploaded is named `05-Device-Hardening.pkt`. For consistency with this lab, it should ideally be renamed to `06-Password-Security.pkt`.
-
----
+| `03-enable-password-security.png` | Enable password and enable secret configuration |
+| `04-console-password.png` | Console password configuration |
+| `05-vty-password.png` | VTY password configuration |
+| `06-Password-Security.pkt` | Packet Tracer project file |
+| `06-authentication-tests.png` | Authentication testing |
+| `07-final-ping.png` | Final connectivity verification |
 
 ## Software Used
 
