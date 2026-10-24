@@ -151,7 +151,7 @@ The extended ACL named `GUEST-RESTRICTION` is used to isolate the Guest VLAN fro
 
 This policy allows Guest users to access approved external destinations while preventing lateral access to Admin, Staff, and Server resources.
 
-![Guest ACL Test](18-guest-acl-test.png)
+![Guest ACL Test](18-guest-acl-tests.png)
 
 ![Final ACL Verification](22-final-acl-verification.png)
 
