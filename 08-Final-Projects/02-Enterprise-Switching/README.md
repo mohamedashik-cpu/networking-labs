@@ -1,6 +1,6 @@
 # Enterprise Switching Network (Cisco Packet Tracer)
  
-A multi-layer campus switching lab built in Cisco Packet Tracer 9.0.1: two Layer 3 core switches with HSRP gateways, three access switches, VLAN segmentation, trunking, an LACP EtherChannel between the cores, RSTP with a deliberate root and backup root, DHCP, port security and a routed uplink to an edge router.
+A multi-layer campus switching lab built in Cisco Packet Tracer 9.0.1. The design uses a redundant Layer 3 core, three access switches, departmental VLANs, first-hop gateway redundancy, loop prevention, automated host addressing and routed edge connectivity. The lab also documents operational caveats and tests that have not yet been performed.
  
 All results below come from the live `02-Enterprise-Switching.pkt` project and the screenshots in this folder. Anything that was not tested is marked **Not tested**.
  
@@ -8,7 +8,9 @@ All results below come from the live `02-Enterprise-Switching.pkt` project and t
  
 ## Project Overview
  
-The network has a core/access design. Each access switch connects to both core switches, the two cores are joined by a Port-channel, and an edge router attaches to each core over a routed point-to-point link. Six PCs, two per access switch, sit in three VLANs.
+The network follows a two-tier campus design. CORE-SW1 and CORE-SW2 provide Layer 3 switching and redundant HSRP gateways. ACC-SW1, ACC-SW2 and ACC-SW3 connect two client PCs each and uplink to both cores. Port-channel1 joins the cores, while EDGE-R1 has one routed point-to-point connection to each core.
+
+The redundant physical paths do not all forward traffic at the same time: Spanning Tree blocks ACC-SW1 Gi0/2 in the captured state to prevent a Layer 2 loop. The routed core-to-router links provide an upstream path to EDGE-R1; the router has no separate upstream connection in this lab.
  
 ### Objectives
  
@@ -19,7 +21,8 @@ The network has a core/access design. Each access switch connects to both core s
 - Provide redundant default gateways with HSRP
 - Provide DHCP for each VLAN and secure the PC-facing access ports
 - Connect the cores to an edge router with routed links and default routes
----
+
+The objectives describe the intended design. Results below distinguish configuration evidence from behavior that was not tested.
  
 ## Technologies Used
  
@@ -54,6 +57,10 @@ Links:
 - Each core Fa0/1, Fa0/2 and Fa0/3 to the Gi0/1 (CORE-SW1) or Gi0/2 (CORE-SW2) uplink of ACC-SW1, ACC-SW2 and ACC-SW3
 - EDGE-R1 Gi0/0 to CORE-SW1 Gi0/2, and EDGE-R1 Gi0/1 to CORE-SW2 Gi0/2
 - Each PC to Fa0/1 or Fa0/2 of its access switch
+
+The access-switch uplinks are physically redundant. STP determines which links forward for each VLAN; in the captured evidence, ACC-SW1 Gi0/2 is blocked while Gi0/1 forwards. The ACC-SW2 and ACC-SW3 trunk forwarding details were not captured, so their active and blocked paths are not described here.
+
+![Topology with port labels](02-network-topology-port-labels.png)
 ---
  
 ## VLAN and IP Plan
@@ -65,7 +72,7 @@ Links:
 | 30 | IT | 192.168.30.0/24 | 192.168.30.1 | 192.168.30.2 | 192.168.30.3 |
 | 99 | Management | none | none | none | none |
  
-VLAN 99 exists and is the trunk native VLAN. It has no SVI or member ports, so no device has a management IP.
+VLAN 99 exists on the switches and is configured as the native VLAN on the documented trunks. It has no SVI and no member access ports in the captured configuration. Therefore, VLAN 99 does not provide an in-band management address for these switches. The VLAN ID is reserved in the design but management reachability has not been implemented.
  
 Routed links:
  
@@ -74,7 +81,7 @@ Routed links:
 | EDGE-R1 Gi0/0 to CORE-SW1 Gi0/2 | 10.0.0.0/30 | 10.0.0.1 | 10.0.0.2 |
 | EDGE-R1 Gi0/1 to CORE-SW2 Gi0/2 | 10.0.0.4/30 | 10.0.0.5 | 10.0.0.6 |
  
-PC addresses are assigned by DHCP and have changed during testing. The addresses at the time of capture:
+PC addresses are assigned dynamically by DHCP, so a lease is a snapshot rather than a permanent host assignment. Addresses shown below are the values recorded at capture time:
  
 | PC | VLAN | Address |
 |---|---|---|
@@ -91,7 +98,7 @@ PC addresses are assigned by DHCP and have changed during testing. The addresses
  
 ### 1. VLANs
  
-VLANs 10, 20, 30 and 99 exist on all five switches.
+Four VLANs provide separate broadcast domains for Sales, HR, IT and the reserved Management VLAN. VLANs 10, 20, 30 and 99 are present on all five switches. The three user VLANs have SVIs on both core switches; VLAN 99 currently has no SVI.
  
 ![VLAN Configuration, CORE-SW1](03-vlan-configuration.png)
 ![VLAN Configuration, CORE-SW2](03b-vlan-configuration-core-sw2.png)
@@ -106,7 +113,9 @@ Fa0/1 and Fa0/2 are access ports in VLAN 10 on ACC-SW1, VLAN 20 on ACC-SW2 and V
  
 ### 3. Trunking
  
-Switch-to-switch links trunk 802.1Q with native VLAN 99 and VLANs 10, 20, 30 and 99 allowed. ACC-SW1 forwards on Gi0/1 only; Gi0/2 forwards no VLANs because it is the blocked redundant uplink. ACC-SW2 and ACC-SW3 trunks were not captured.
+The documented switch-to-switch trunks use 802.1Q, native VLAN 99, and an allowed VLAN list of 10, 20, 30 and 99. This carries the user VLANs and the reserved native VLAN over shared physical uplinks.
+
+In the captured STP state, ACC-SW1 Gi0/1 forwards and ACC-SW1 Gi0/2 is the redundant uplink in a non-forwarding state. The second link remains physically connected; STP blocks it to prevent a loop. Trunk details for ACC-SW2 and ACC-SW3 were not captured, so their allowed VLANs and forwarding states remain unverified.
  
 ![Trunks, CORE-SW1](05-trunk-configuration.png)
 ![Trunks, CORE-SW2](05b-trunk-configuration-core-sw2.png)
@@ -114,7 +123,9 @@ Switch-to-switch links trunk 802.1Q with native VLAN 99 and VLANs 10, 20, 30 and
  
 ### 4. Spanning Tree
  
-CORE-SW1 is the root bridge for VLANs 10, 20, 30 and 99 (priority 4096 plus the VLAN ID). CORE-SW2 is configured with priority 8192 and reaches the root through Port-channel1.
+Rapid PVST+ maintains a separate spanning-tree instance per VLAN. CORE-SW1 is the root bridge for VLANs 10, 20, 30 and 99, using priority 4096 plus the VLAN ID. CORE-SW2 has priority 8192 and is positioned as the backup root. In the captured state, CORE-SW2 reaches the root through Port-channel1.
+
+STP prevents the redundant core/access paths from creating forwarding loops. As a result, a connected uplink may show as blocked for a VLAN while remaining available as an alternate path if the active path changes.
  
 ![STP Root, VLANs 10 and 20](06-spanning-tree-root.png)
 ![STP Root, VLANs 30 and 99](06b-spanning-tree-root-vlan30-99.png)
@@ -122,7 +133,9 @@ CORE-SW1 is the root bridge for VLANs 10, 20, 30 and 99 (priority 4096 plus the 
  
 ### 5. EtherChannel
  
-Port-channel1 is bundled with LACP on both cores. Fa0/23 and Fa0/24 both show as bundled (P).
+Port-channel1 combines two physical FastEthernet links between the core switches using LACP. Both Fa0/23 and Fa0/24 are reported as bundled (P) on each core in the captured EtherChannel summaries. The port-channel is configured as a trunk, so the allowed VLANs can cross the inter-core connection.
+
+This verifies the bundle membership at capture time. Link failure and recovery behavior were not separately tested.
  
 ![EtherChannel, CORE-SW1](07-etherchannel-summary.png)
 ![EtherChannel, CORE-SW2](07b-etherchannel-summary-core-sw2.png)
@@ -130,14 +143,18 @@ Port-channel1 is bundled with LACP on both cores. Fa0/23 and Fa0/24 both show as
  
 ### 6. HSRP
  
-CORE-SW1 (priority 110) is Active and CORE-SW2 (priority 100) is Standby for groups 10, 20 and 30. The `show standby brief` output covers all three groups, so one screenshot per core is used for all three VLANs.
+HSRP version 2 provides a shared default gateway address for each user VLAN. CORE-SW1 has priority 110 and is Active; CORE-SW2 has priority 100 and is Standby for groups 10, 20 and 30. Preempt is configured so the higher-priority core can resume the Active role after recovery.
+
+The `show standby brief` output covers all three groups, so one screenshot per core is used for all three VLANs. The captured role state is verified; failover after shutting down a core or SVI was not tested.
  
 ![HSRP, CORE-SW1](09-hsrp-vlan10.png)
 ![HSRP, CORE-SW2](09b-hsrp-core-sw2.png)
  
 ### 7. Routed Uplinks and Routing
  
-EDGE-R1 Gi0/0 and Gi0/1 are up with the addresses above, and Gi0/2 on each core is a routed port. Each core has a default route to EDGE-R1. EDGE-R1 has a static `192.168.0.0/16` route through both cores and no default route.
+EDGE-R1 Gi0/0 and Gi0/1 connect to routed Gi0/2 interfaces on the two cores. The `/30` point-to-point subnets keep each router-to-core link in its own small network. Both links are reported up, and the cores have default routes pointing to EDGE-R1. EDGE-R1 has static return routes for `192.168.0.0/16` through both core addresses.
+
+EDGE-R1 has no default route because the topology has no additional upstream device or Internet link. The lab therefore demonstrates routing to the edge router and return routing toward the campus, rather than Internet access.
  
 ![Router Interfaces](12-router-interface-status.png)
 ![Core Routed Links, CORE-SW1](13-core-routed-links.png)
@@ -148,7 +165,7 @@ EDGE-R1 Gi0/0 and Gi0/1 are up with the addresses above, and Gi0/2 on each core 
  
 ### 8. DHCP
  
-Pools SALES, HR and IT run on the cores with the HSRP address as the default router. The screenshot shows the lease bindings for the six PCs.
+The core switches provide DHCP pools named SALES, HR and IT for the three client VLANs. Each pool supplies the subnet settings and the corresponding HSRP virtual address as the default gateway. The captured lease table shows bindings for all six PCs. Because the pool can allocate a different address later, the lease table and PC addresses in this README describe the capture-time state.
  
 ![DHCP Leases](15-dhcp-configuration.png)
  
@@ -163,7 +180,9 @@ Pools SALES, HR and IT run on the cores with the HSRP address as the default rou
  
 ### 10. Port Security
  
-Fa0/1 and Fa0/2 on each access switch use sticky MAC learning, a maximum of 1 address and violation mode shutdown. Each port shows 1 secure MAC and 0 violations.
+The client-facing Fa0/1 and Fa0/2 ports on each access switch use sticky MAC learning, with a maximum of one secure address and violation mode `shutdown`. At capture time each client port showed one secure MAC and zero violations.
+
+This confirms the configured policy and current learned addresses. A deliberate unauthorized-device test was not run, so the shutdown response to a violation is configured but not behaviorally verified.
  
 ![Port Security, ACC-SW1](17-port-security.png)
 ![Port Security, ACC-SW2](17b-port-security-acc-sw2.png)
@@ -173,6 +192,8 @@ Fa0/1 and Fa0/2 on each access switch use sticky MAC learning, a maximum of 1 ad
  
 ## Verification Results
  
+The table separates observed configuration and successful checks from behavior that remains untested or incomplete. “Pass” refers to the captured command output or ping result at that point in the lab; it does not imply every failure mode has been tested.
+
 | Test | Result |
 |---|---|
 | VLANs 10, 20, 30, 99 present on all switches | Pass (03, 03b, 04 series) |
@@ -192,7 +213,7 @@ Fa0/1 and Fa0/2 on each access switch use sticky MAC learning, a maximum of 1 ad
 | PC to EDGE-R1 10.0.0.1, second run | 5 of 6 PCs 4/4; PC-A1 3/4 (shown in 18); a third PC-A1 run was 4/4 |
 | Cross-VLAN PC to PC pings | Not re-run for this evidence set |
  
-The first ping to EDGE-R1 loses a packet on every PC even with ARP warmed on the gateway path. The cause was not determined.
+The gateway tests succeeded on their second run, but reachability to EDGE-R1 was less consistent. The first-ping series lost packets from each PC (PC-A1 lost two); on the second run five PCs reached `10.0.0.1` with 4/4 replies while PC-A1 received 3/4, and a later PC-A1 run received 4/4. The cause has not been identified, so treat PC-to-router connectivity as intermittently successful rather than fully resolved.
  
 ![Connectivity Tests](18-connectivity-tests.png)
  
@@ -213,14 +234,19 @@ The first ping to EDGE-R1 loses a packet on every PC even with ARP warmed on the
  
 ## Known Limitations
  
-- Gi0/1 on both cores is down and unused (left from an earlier core-to-core link).
-- EDGE-R1 Gi0/2 and Vlan1 are administratively down; the router has no default route or upstream link.
-- Unused access ports (Fa0/3 to Fa0/24) remain in VLAN 1 without port security.
-- VLAN 99 has no SVI, so no switch has a management IP, and all devices keep default IOS hostnames.
-- DHCP lease addresses changed between captures.
+- **Management:** VLAN 99 is present as a native VLAN but has no SVI or access-port members, so switch management IP reachability is not configured.
+- **Redundant uplinks:** ACC-SW1 Gi0/2 is connected but STP-blocked in the captured state. ACC-SW2 and ACC-SW3 trunk forwarding details were not captured.
+- **Unused interfaces:** Gi0/1 on both cores is down and unused. EDGE-R1 Gi0/2 and Vlan1 are administratively down. The router has no default route or upstream link.
+- **Access-port hardening:** Unused access ports Fa0/3–Fa0/24 remain in VLAN 1 and do not have port security configured.
+- **Device identity:** IOS hostnames remain at their default values, which can make CLI sessions harder to distinguish.
+- **Dynamic addressing:** DHCP lease addresses changed between testing and captures; listed PC addresses are not guaranteed to persist.
+- **Unresolved connectivity:** PC-to-EDGE-R1 ping results varied between runs. The packet loss cause remains unknown.
+- **Not tested:** HSRP failover, EtherChannel member failure/recovery, port-security violation handling and cross-VLAN host-to-host pings were not tested for this evidence set.
 ---
  
 ## Project Evidence
+ 
+Screenshots are stored alongside this README. They show the topology, switch and router command output, client addressing, and connectivity checks. The port-labeled topology image is included as supplemental visual evidence; configuration claims should be read together with the matching CLI screenshots.
  
 `01-network-topology.png`, `03-vlan-configuration.png`, `03b-vlan-configuration-core-sw2.png`, `04-access-port-assignments.png`, `04b-access-port-assignments-acc-sw2.png`, `04c-access-port-assignments-acc-sw3.png`, `05-trunk-configuration.png`, `05b-trunk-configuration-core-sw2.png`, `05c-trunk-configuration-acc-sw1.png`, `06-spanning-tree-root.png`, `06b-spanning-tree-root-vlan30-99.png`, `06c-spanning-tree-core-sw2-vlan10-99.png`, `07-etherchannel-summary.png`, `07b-etherchannel-summary-core-sw2.png`, `08-core-to-core-trunk.png`, `09-hsrp-vlan10.png`, `09b-hsrp-core-sw2.png`, `12-router-interface-status.png`, `13-core-routed-links.png`, `13b-core-routed-links-core-sw2.png`, `14-routing-tables.png`, `14b-routing-table-core-sw1.png`, `14c-routing-table-core-sw2.png`, `15-dhcp-configuration.png`, `16-pc-ip-configuration.png` and `16b` to `16f`, `17-port-security.png`, `17b-port-security-acc-sw2.png`, `17c-port-security-acc-sw3.png`, `18-connectivity-tests.png`, `19-final-interface-status.png` and `19b` to `19f`, `20-final-topology.png`.
  
@@ -230,6 +256,8 @@ The first ping to EDGE-R1 loses a packet on every PC even with ARP warmed on the
  
 - `02-Enterprise-Switching.pkt` is the Packet Tracer 9.0.1 project. Open it in Packet Tracer 9.0.1 or later.
 - `README.md` is this document, and the numbered PNG files above are the screenshots.
+
+Open the `.pkt` file in Cisco Packet Tracer 9.0.1 or later to inspect the topology. Use the device CLI tabs to review the running configuration and repeat the documented checks. The screenshot addresses and DHCP bindings may differ from a later run because leases are dynamic.
 ---
  
 ## Skills Demonstrated
@@ -241,5 +269,5 @@ The first ping to EDGE-R1 loses a packet on every PC even with ARP warmed on the
 - DHCP services, sticky port security and verification with show commands and pings
 ## Conclusion
  
-The network implements VLANs, trunks, an LACP core link, STP root and backup root, HSRP gateways, DHCP, port security and routed edge uplinks, and the captured evidence supports each of those. HSRP failover and violation handling were not tested, and a one-packet loss on the first ping to EDGE-R1 remains unexplained.
+The captured project demonstrates a layered campus switching design with VLAN segmentation, 802.1Q trunks, LACP core aggregation, Rapid PVST+ root selection, HSRP gateways, DHCP, port security and routed links to an edge router. The evidence verifies the configured state and the listed successful checks. It also records the current boundaries of the lab: no management SVI or upstream Internet path, untested failover and violation behavior, and intermittent packet loss on PC-to-router tests that still needs investigation.
  
