@@ -166,8 +166,6 @@ The following screenshot files were confirmed present and non-empty in the local
 
 `01-routing-topology.png`, `02-hq-switch-vlans-trunk.png`, `03-hq-r1-interfaces.png`, `04-hq-r1-routing-table.png`, `05-br1-r1-routing-and-relay.png`, `05b-br2-r1-routing-and-relay.png`, `06-hq-r1-nat-config.png`, `07-hq-r1-nat-translations.png`, `08-dhcp-client-hq-pc1.png`, `08b-dhcp-client-br1-pc1.png`, `08c-dhcp-client-br2-pc1.png`, `09-connectivity-tests-hq-pc1.png`, `10-hq-srv-dhcp-pools.png`, `11-dns-tests.png`, `11b-dns-tests-br1-pc1.png`, `11c-dns-tests-br2-pc1.png`, `12-http-access-tests.png`, `12b-http-access-tests-br1-pc1.png`, `12c-http-access-tests-br2-pc1.png`, `12d-hq-custom-http-page.png`, `13-hq-srv-dns-and-http.png`, `13b-hq-srv-http-service.png`, `14-server-ip-configurations.png`, `14b-ext-srv-ip-configuration.png`, `15-remaining-pc-addresses.png`, `15b-br1-pc2-address.png`, `15c-br2-pc2-address.png`, `16-branch-connectivity-tests.png`, `16b-br2-branch-connectivity-tests.png`.
 
-Place these PNG files in the same GitHub project folder as this README so the relative image links above render correctly. The screenshots currently reside in `C:\Users\kingo\PacketTracerMCP\screenshots\` and are shared with another project, so upload only the listed files to this project's folder.
-
 ---
 
 ## Project Files
