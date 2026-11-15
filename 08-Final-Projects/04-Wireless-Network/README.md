@@ -2,7 +2,7 @@
 
 A small-business wireless LAN built in Cisco Packet Tracer 9.0.1. One router provides the gateway and DHCP, one access point provides a WPA2-Personal (AES) network, and wired and wireless clients share a single 192.168.10.0/24 subnet.
 
-All results below come from the live `04-Wireless-Network.pkt` project during testing. Items that were not proven are marked as such. The screenshot files were reported as saved by the capture tool; their presence on disk and their content were **not independently verified** (see Evidence).
+All results below come from the live `04-Wireless-Network.pkt` project during testing. Items that were not proven are marked as such. The nine screenshots were checked locally for file presence, non-zero size, and visible content. No passphrase is shown. The `wl-06a` HTTP screenshot shows the expected page, but may show a previously loaded or cached page.
 
 ---
 
@@ -149,7 +149,7 @@ The wrong-passphrase test on LAPTOP2 did not prove WPA2 enforcement: the laptop 
 
 ## Project Evidence
 
-Screenshots reported as saved by the capture tool. Their presence on disk and content were not independently verified.
+All nine screenshots below were checked locally for file presence, non-zero size, and visible content. None shows a passphrase. `wl-06a-laptop1-http.png` may show a previously loaded or cached page.
 
 `wl-01-topology.png`, `wl-02-r1-dhcp.png`, `wl-03-biz-srv.png`, `wl-03b-biz-srv-http-service.png`, `wl-04a-laptop1-address.png`, `wl-04b-laptop2-address.png`, `wl-05a-laptop1-connectivity.png`, `wl-05b-laptop2-connectivity.png`, `wl-06a-laptop1-http.png`
 
